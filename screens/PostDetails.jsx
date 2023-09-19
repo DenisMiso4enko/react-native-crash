@@ -1,8 +1,7 @@
-import React from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { Loading } from "../components/Loading";
-import { useEffect, useState } from "react";
+import { usePostDetails } from "../hooks/usePostDetails";
 import styled from "styled-components/native";
 
 const PostImage = styled.Image`
@@ -18,27 +17,14 @@ const PostText = styled.Text`
 `;
 
 export const PostDetailsScreen = ({ route, navigation }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState();
   const { id, title } = route.params;
+  const { isLoading, data } = usePostDetails(id);
 
   useEffect(() => {
     navigation.setOptions({
       title,
     });
-    axios
-      .get(`https://633962f7937ea77bfdca2ed8.mockapi.io/posts/${id}`)
-      .then(({ data }) => {
-        setData(data);
-      })
-      .catch((err) => {
-        console.log(err);
-        Alert.alert("Ошибка", "Не удалось получить статью");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+  }, [navigation, title]);
 
   if (isLoading) {
     return (
